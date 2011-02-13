@@ -15,14 +15,12 @@ my $staticmap = Geo::OSM::StaticMap->new(
 );
 is( $staticmap->url(), 'http://staticmap.openstreetmap.de/staticmap.php?center=48.21395,16.33629&zoom=17&size=756x476&markers=48.21395,16.33629,red-pushpin&maptype=mapnik', 'Got expected URL with explicit center and zoom');
 
-print $url;
-
 # Test center and zoom calculation from markers
 my $staticmap_url = Geo::OSM::StaticMap->new(
     size    => [ 756, 476 ],
     markers => [ [ 51.8785011494, -0.3767887732, 'ol-marker' ],
                  [ 51.455313, -2.591902, 'ol-marker' ], ])->url();
-                 
+
 is( $staticmap_url, 'http://staticmap.openstreetmap.de/staticmap.php?center=51.6721152964047,-1.47917174588472&zoom=8&size=756x476&markers=51.8785011494,-0.3767887732,ol-marker|51.455313,-2.591902,ol-marker&maptype=mapnik', 'Got expected URL with center and zoom calculated from markers');
 
 my $staticmap_defaults_test = Geo::OSM::StaticMap->new();
