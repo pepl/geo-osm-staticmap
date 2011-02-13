@@ -2,4 +2,6 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.1       2011-02-13 18:48:01 Europe/Vaduz
+
     - Initial release
