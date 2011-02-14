@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+    - Updated tests to take different precision of calculated values for 'center'
+      depending on Perl having uselongdouble defined or not into account.
+
 0.1       2011-02-13 18:48:01 Europe/Vaduz
 
     - Initial release
