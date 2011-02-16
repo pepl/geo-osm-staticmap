@@ -2,7 +2,7 @@ NAME
     Geo::OSM::StaticMap - Generate URLs to Open Street Map static maps
 
 VERSION
-    version 0.2
+    version 0.3
 
 SYNOPSIS
         my $staticmap = Geo::OSM::StaticMap->new(
