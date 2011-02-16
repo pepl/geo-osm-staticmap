@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.3       2011-02-16 09:52:38 Europe/Vaduz
+
     - Skip Config, Carp, English and File::Find modules in build_requires
 
 0.2       2011-02-14 10:12:10 Europe/Vaduz
