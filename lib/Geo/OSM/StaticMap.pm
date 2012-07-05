@@ -4,6 +4,7 @@ use warnings;
 
 package Geo::OSM::StaticMap;
 
+use List::Util qw(min);
 use Moose;
 use Math::Trig qw(:pi tan deg2rad rad2deg);
 use Geo::Distance;
@@ -174,7 +175,7 @@ sub _build_zoom {
     return 17 unless defined $self->_radius();
 
     my $size = $self->size();
-    my $map_width_pixels = $size->[0];
+    my $map_width_pixels = min($size->[0], $size->[1]);
 
     # "assumed standard pixel size of 0.28 millimeters as defined by the OGC
     # (Open Geospatial Consortium) SLD (Styled Layer Descriptor)"
