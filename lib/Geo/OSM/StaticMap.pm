@@ -140,8 +140,8 @@ sub _build_center {
             push (@lats, $marker->[0]);
             push (@lons, $marker->[1]);
         }
-        my @sorted_lats = sort @lats;
-        my @sorted_lons = sort @lons;
+        my @sorted_lats = sort {$a <=> $b} @lats;
+        my @sorted_lons = sort {$a <=> $b} @lons;
 
         # Roughly calculate a bounding box. We do not need to be geo exact here.
         my $sw = { lat => $sorted_lats[0], lon => $sorted_lons[0] };
