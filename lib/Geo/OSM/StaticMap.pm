@@ -18,31 +18,6 @@ has 'maptype' => (is => 'rw', isa => 'Str', default => 'mapnik' );
 has '_radius' => (is => 'rw', isa => 'Num' );
 has '_geodistance' => (is => 'rw', isa => 'Object', default => sub { Geo::Distance->new() } );
 
-# See
-# http://wiki.openstreetmap.org/wiki/Zoom_levels
-# http://svn.openstreetmap.org/applications/rendering/mapnik/zoom-to-scale.txt
-# for more information regarding the zoom level and scale denominators
-my %zoomlevel_to_scaledenom = (
-    1 => 279541132.014,
-    2 => 139770566.007,
-    3 => 69885283.0036,
-    4 => 34942641.5018,
-    5 => 17471320.7509,
-    6 => 8735660.37545,
-    7 => 4367830.18772,
-    8 => 2183915.09386,
-    9 => 1091957.54693,
-    10 => 545978.773466,
-    11 => 272989.386733,
-    12 => 136494.693366,
-    13 => 68247.3466832,
-    14 => 34123.6733416,
-    15 => 17061.8366708,
-    16 => 8530.9183354,
-    17 => 4265.4591677,
-    18 => 2132.72958385,
-);
-
 # ABSTRACT: Generate URLs to Open Street Map static maps
 =head1 METHODS
 
@@ -146,10 +121,13 @@ sub _build_center {
         # Roughly calculate a bounding box. We do not need to be geo exact here.
         my $sw = { lat => $sorted_lats[0], lon => $sorted_lons[0] };
         my $ne = { lat => $sorted_lats[-1], lon => $sorted_lons[-1] };
+
         my $midpoint = $self->_midpoint_to( $sw, $ne );
 
         # Calculate and store the radius of the virtual circle between center and outmost location
         $self->_radius( $self->_geodistance->distance( 'meter', $sw->{lon}, $sw->{lat} => $midpoint->{lon}, $midpoint->{lat} ) );
+
+        $self->markers( $markers );
 
         return [ $midpoint->{lat}, $midpoint->{lon} ];
     }
@@ -177,20 +155,14 @@ sub _build_zoom {
     my $size = $self->size();
     my $map_width_pixels = min($size->[0], $size->[1]);
 
-    # "assumed standard pixel size of 0.28 millimeters as defined by the OGC
-    # (Open Geospatial Consortium) SLD (Styled Layer Descriptor)"
-    # http://trac.mapnik.org/wiki/ScaleAndPpi
-    my $pixel_width = 0.00028;
-    my $scale_denominator = ($self->_radius() * 2) / ($map_width_pixels * $pixel_width);
-
-    # See where we roughly fit in the scale denominator range.
-    foreach my $key ( reverse sort { $a <=> $b } keys %zoomlevel_to_scaledenom ) {
-       if ( $scale_denominator < $zoomlevel_to_scaledenom{$key} ) {
-            return $key-1;
-       }
-       if ( $scale_denominator > $zoomlevel_to_scaledenom{$key} and $scale_denominator < $zoomlevel_to_scaledenom{$key-1} ) {
-            return $key-2;
-       }
+    # See where we roughly fit
+    # http://gis.stackexchange.com/questions/19632/how-to-calculate-the-optimal-zoom-level-to-display-two-or-more-points-on-a-map
+    # OSM currently has 18 zoom levels...
+    foreach my $zoomlevel ( reverse( 1..18 ) ) {
+        my $dim = (256 * $self->_radius() * 2 / 40_000_000 * 2 ** $zoomlevel);
+        if ( $dim < $map_width_pixels ) {
+            return $zoomlevel;
+        }
     }
 
     return 1;
