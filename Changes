@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+    - Updated zoom level calulation algorithm
+    - Numeric sorting of geo coordinates (Jiří Václavík)
+    - Use shorter side of map for zoom calculation Ivan Ivanov
+
 0.3       2011-02-16 09:52:38 Europe/Vaduz
 
     - Skip Config, Carp, English and File::Find modules in build_requires
